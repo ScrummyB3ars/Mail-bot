@@ -1,0 +1,22 @@
+[  
+    {  
+	"mail_id":"0",
+        "hint_id":"1",
+  	"has_hint":"true"
+    },
+    { 
+	"mail_id":"1",
+        "hint_id":"5"
+  	"has_hint":"false"
+    },
+    { 
+	"mail_id":"0",
+        "hint_id":"0"
+  	"has_hint":"true"
+    },
+    {  
+	"mail_id":"1",
+        "hint_id":"3"
+  	"has_hint":"true"
+    }
+]

@@ -1,0 +1,38 @@
+[  
+    {  
+	"id":"0",
+        "hint":"HINT 1",
+        "image":"1"
+    },
+    { 
+	"id":"1",
+        "hint":"HINT 2",
+        "image":"1"
+    },
+    { 
+	"id":"2",
+        "hint":"HINT 3",
+        "image":"1"
+    },
+    {  
+	"id":"3",
+        "hint":"HINT 4",
+        "image":"1"
+    },
+    { 
+	"id":"4",
+        "hint":"HINT 5",
+        "image":"1"
+    },
+    { 
+	"id":"5",
+        "hint":"HINT 6",
+        "image":"1"
+    },
+    { 
+	"id":"6",
+        "hint":"HINT 7",
+        "image":"1"
+    },
+
+]
