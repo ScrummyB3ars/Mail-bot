@@ -8,6 +8,7 @@ package JavaMail;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.InputStreamReader;
+import java.io.StringWriter;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.Date;
@@ -21,6 +22,7 @@ import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import java.util.Random;
+import javax.net.ssl.HttpsURLConnection;
 
 import java.io.StringWriter;
 import java.util.ArrayList;
@@ -38,13 +40,15 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
  */
 public class Mail{
     private static JSONArray mailAddresses;
-    private static JSONArray hints;
+    private static JSONArray interaction_hints;
+    private static JSONArray taal_hints;
     private static JSONArray mail_has_hints;
     private static String host;
     private static String user;
     private static String pass;
     private static String from;
     private static JSONParser parser;
+    private static JSONParser parser2;
     private static Properties props;
     private static int counter = 0;
 
@@ -54,31 +58,11 @@ public class Mail{
     
     /**
      * Settings of the mail server 
-     * Get data from API call
+     * Get data from api call
      */
     public static void initializeMail() {
-        setSettingsMailserver();
         getAllData();
-    }
-    
-    public static String initializeHtml () {        
-        try 
-        {
-            VelocityEngine ve = new VelocityEngine();
-            ve.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
-            ve.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
-            ve.init();
-        
-            VelocityContext context = new VelocityContext();
-            context.put("name", "World");
-            Template t = ve.getTemplate( "Templates/mail.vm" );
-            StringWriter writer = new StringWriter();
-            t.merge( context, writer );
-            return writer.toString();
-        } catch (Exception ex){
-
-        }
-        return null;
+        setSettingsMailserver();
     }
 
     private static void setSettingsMailserver (){
@@ -94,13 +78,40 @@ public class Mail{
         props.put("mail.smtp.auth", "true");
         props.put("mail.smtp.starttls.required", "true");
     }
+    
+        public static String initializeHtml (String team_tip, String interaction_tip, String name) {        
+        try 
+        {
+            VelocityEngine ve = new VelocityEngine();
+            ve.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
+            ve.setProperty("classpath.resource.loader.class", ClasspathResourceLoader.class.getName());
+            ve.init();
+            Template t = ve.getTemplate( "Templates/mail.vm" );
+            VelocityContext context = new VelocityContext();
+            context.put("name", name.toString());
+            context.put("interaction_tip", interaction_tip.toString());
+            context.put("team_tip", team_tip.toString());
+            
+            StringWriter writer = new StringWriter();
+            t.merge( context, writer );
+            return writer.toString();
+        } catch (Exception ex){
+
+        }
+        return null;
+    }
 
     private static void getAllData () {        
         try
         {
-            mailAddresses = (JSONArray) parser.parse(new FileReader("..\\JavaMail\\jsonFiles\\mail.json"));   
-            hints = (JSONArray) parser.parse(new FileReader("..\\JavaMail\\jsonFiles\\hints.json"));
+            //mailAddresses = (JSONArray) getAPIRequest("https://api-toddlr.herokuapp.com/users");   
+            //interaction_hints = (JSONArray) getAPIRequest("https://api-toddlr.herokuapp.com/interaction_tips/random");
+            //taal_hints = (JSONArray) getAPIRequest("https://api-toddlr.herokuapp.com/theme_tips/random");
             mail_has_hints = (JSONArray) parser.parse(new FileReader("..\\JavaMail\\jsonFiles\\mail_has_hints.json"));
+            mailAddresses = (JSONArray) parser.parse(new FileReader("..\\JavaMail\\jsonFiles\\mail.json"));   
+            taal_hints = (JSONArray) parser.parse(new FileReader("..\\JavaMail\\jsonFiles\\hints.json"));   
+            interaction_hints = (JSONArray) parser.parse(new FileReader("..\\JavaMail\\jsonFiles\\hints.json"));
+
         } catch (Exception ex)
         {
             System.out.println(ex);
@@ -109,8 +120,8 @@ public class Mail{
     
     private static void getAllMailAddresses () {        
         try
-        {
-            mailAddresses = (JSONArray) parser.parse(new FileReader("..\\JavaMail\\mail.json"));   
+        {     
+            mailAddresses = (JSONArray) getAPIRequest("https://api-toddlr.herokuapp.com/users");   
         } catch (Exception ex)
         {
             System.out.println(ex);
@@ -120,7 +131,8 @@ public class Mail{
     private static void getAllHints(){
         try
         {
-            hints = (JSONArray) parser.parse(new FileReader("..\\JavaMail\\hints.json"));
+            interaction_hints = (JSONArray) getAPIRequest("https://api-toddlr.herokuapp.com/interaction_tips/random");
+            taal_hints = (JSONArray) getAPIRequest("https://api-toddlr.herokuapp.com/theme_tips/random");
         } catch (Exception ex)
         {
             System.out.println(ex);
@@ -130,7 +142,7 @@ public class Mail{
     private static void getAddressToHint(){
         try
         {
-            mail_has_hints = (JSONArray) parser.parse(new FileReader("..\\JavaMail\\mail_has_hints.json"));
+            mail_has_hints = (JSONArray) parser.parse(new FileReader("..\\..\\Jsonfiles\\mail_has_hints.json"));
         } catch (Exception ex)
         {
             System.out.println(ex);
@@ -138,26 +150,55 @@ public class Mail{
     }
 
     public static void checkMail (){
-        String mail = (String) getRandomMailAddress().get("mail");
-        String hint = (String) getRandomHint().get("hint") ;
-        sendMail(mail, hint);
+        String mail = (String) getRandomMailAddress();
+        String taal_tip = (String) getRandomTaal_Hint();
+        String interaction_tip = (String) getRandomInteraction_Hint();
+        String name = mail ;
+        sendMail(mail, taal_tip, interaction_tip, name);
     }
     
-    private static JSONObject getRandomHint() {
+    private static String getRandomTaal_Hint() {
         Random r = new Random();
-	int random = r.nextInt(hints.size());
-        JSONObject selectedRandomObject = (JSONObject) hints.get(random);
-        return (selectedRandomObject);        
+	int random = r.nextInt(taal_hints.size());
+        JSONObject selectedRandomObject = (JSONObject) taal_hints.get(random);
+        String rtrn = selectedRandomObject.get("hint").toString();
+        return (rtrn);    
+        
+        //Code voor api        
+        /*parser.parse(taal_hints.toString());
+        JSONObject jsonObject2 = (JSONObject) parser.parse(taal_hints.get(0).toString());
+        return(jsonObject2.get("tip_content").toString());*/
     }
     
-    private static JSONObject getRandomMailAddress() {
+    private static String getRandomInteraction_Hint() {
+        Random r = new Random();
+	int random = r.nextInt(interaction_hints.size());
+        JSONObject selectedRandomObject = (JSONObject) interaction_hints.get(random);        
+        String rtrn = selectedRandomObject.get("hint").toString();
+        return (rtrn);    
+        
+        //Code voor api
+        /*parser.parse(interaction_hints.toString());
+        JSONObject jsonObject = (JSONObject) parser.parse(interaction_hints.get(0).toString());
+        return(jsonObject.get("tip_content").toString());*/
+    }
+    
+    private static String getRandomMailAddress() {       
         Random r = new Random();
 	int random = r.nextInt(mailAddresses.size());
         JSONObject selectedRandomObject = (JSONObject) mailAddresses.get(random);
-        return (selectedRandomObject);        
+        String rtrn = selectedRandomObject.get("mail").toString();
+        return (rtrn);   
+        
+        //Code voor api
+        /*parser.parse(mailAddresses.toString());
+        JSONArray jsonObject = (JSONArray) parser.parse(mailAddresses.get(0).toString());
+        JSONObject json = (JSONObject) jsonObject.get(r);
+        JSONObject mail = json.get("email");
+        return (mail.toString())*/
     }
     
-    private static Message createMessage(Session mailSession, String mail, String hint){
+    private static Message createMessage(Session mailSession, String mail, String taal_tip, String interaction_tip, String name){
         Message msg = new MimeMessage(mailSession);
         try{
             
@@ -167,7 +208,7 @@ public class Mail{
             String subject = "Hint (" + counter + ")";    
             msg.setRecipients(Message.RecipientType.TO, address);
             msg.setSubject(subject); msg.setSentDate(new Date());
-            msg.setContent(initializeHtml(), "text/html; charset=utf-8");
+            msg.setContent(initializeHtml(taal_tip, interaction_tip, name), "text/html; charset=utf-8");
             return msg;
         } catch (Exception ex)
         {
@@ -187,7 +228,7 @@ public class Mail{
         }
     }
     
-    public static void sendMail (String mail, String hint) {
+    public static void sendMail (String mail, String taal_tip, String interaction_tip , String name) {
         try 
         {
             setSettingsMailserver();   
@@ -200,13 +241,29 @@ public class Mail{
             Session mailSession = Session.getDefaultInstance(props, null);
             mailSession.setDebug(sessionDebug);
 
-            Message msg = createMessage(mailSession, mail, "TEST");
+            Message msg = createMessage(mailSession, mail, taal_tip, interaction_tip, name);
             sendMail(mailSession, msg);
-            System.out.println("Mail naar: " + mail + ", " + hint); //debug
+            System.out.println("Mail naar: " + mail + ", " + taal_tip); //debug
         } catch (Exception ex)
         {
 
         }
     }
+    
+    private static JSONArray getAPIRequest(String urlToRead) throws Exception {
+      JSONArray test = new JSONArray();
+      URL url = new URL(urlToRead);
+      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+      conn.setRequestMethod("GET");
+      BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+      String line;
+      while ((line = rd.readLine()) != null) {
+         test.add(line);
+      }
+      rd.close();
+      return test;
+   }
+
+
 
 }

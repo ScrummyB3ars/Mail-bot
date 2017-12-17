@@ -1,18 +1,18 @@
 [  
     {  
 	"id":"0",
-        "name":"Bruno - Gmail",
-        "mail":"dedeynebruno97@gmail.com"
+        "name":"Milan - Live",
+        "mail":"bruno.dedeyne@live.be"
     },
     { 
 	"id":"1", 
-        "name":"Bruno - Student",
+        "name":"Milan - Hotmail",
         "mail":"bruno.dedeyne@student.odisee.be"
     },
     {  
 	"id":"2",
-        "name":"Bruno - Live",
-        "mail":""
+        "name":"Milan - Live",
+        "mail":"dedeynebruno97@gmail.com"
     },
     { 
 	"id":"3", 

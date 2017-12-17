@@ -4,6 +4,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 
 
+
 /**
  *
  * @author User
@@ -15,10 +16,15 @@ public class Kleuterblog {
      * @param args 
      */
     public static void main(String args[]){
-        try{            
-            Mail mailObject = new Mail();   
+        
+        Weather weather = new Weather();
+        //Subscriber subscrive = new Subscriber();
+        
+        weather.getCondition(8820);    
+        /*try{    
+            Mail mailObject = new Mail();
+            //Weather weather = new Weather();
             mailObject.initializeMail();
-            mailObject.initializeHtml();
             //mail.getAllHints();
             
             Timer timer = new Timer();
@@ -26,13 +32,14 @@ public class Kleuterblog {
                 @Override
                 public void run(){
                     mailObject.checkMail();
-                    //mailObject.api();
+                    //weather.getCondition(9000);
                 }
-            }, 100, 500);
+            }, 100, 5000);
         }catch(Exception ex)
         {
             System.out.println(ex);
-        }
-            
+        }*/
+        
+               
     }
 }
