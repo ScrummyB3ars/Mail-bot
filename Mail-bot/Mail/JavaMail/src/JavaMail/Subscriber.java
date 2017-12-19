@@ -20,17 +20,21 @@ import org.json.simple.JSONArray;
  */
 public class Subscriber {
     
-    private int idSubrsciber;
-    private String name;
-    private String firstName;
-    private String emailAddress;
+    public int idSubrsciber;
+    public String userName;
+    public String emailAddress;
+    public int zipCode;
     private String URLAddSubscriber = "https://api-toddlr.herokuapp.com/addSubscriber";
     
-    public Subscriber(int idSubrsciber, String name, String firstName, String emailAddress){
+    public Subscriber(int idSubrsciber, String userName, String emailAddress, int zipCode){
         this.idSubrsciber = idSubrsciber;
-        this.name = name;
-        this.firstName = firstName;
+        this.userName = userName;
         this.emailAddress = emailAddress;
+        this.zipCode = zipCode;
+    }
+    
+    public Subscriber(){
+        
     }
     
     public void Unsubscribe(){

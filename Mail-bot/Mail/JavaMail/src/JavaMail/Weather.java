@@ -49,28 +49,27 @@ public class Weather {
     public WeatherCondition getCondition(int zipCode){
         try{            
             parser = new JSONParser();
-            JSONArray weatherInfo = getAPIRequest(URLWeatherCondition);
+            JSONArray weatherInfo = (JSONArray) getAPIRequest(URLWeatherCondition);
             parser.parse(weatherInfo.toString());
-            JSONObject jsonObject = (JSONObject) parser.parse(weatherInfo.get(0).toString());
-            JSONArray json = (JSONArray) parser.parse(jsonObject.get("weather").toString());
-            JSONObject jsonObjects = (JSONObject) parser.parse(json.get(0).toString());            
-            int idWeather = Integer.parseInt(jsonObjects.get("id").toString());
-            System.out.println(idWeather);
-            
+            JSONObject jsonObjectAllInfo = (JSONObject) parser.parse(weatherInfo.get(0).toString());
+            JSONArray jsonArrayWeatherInfo = (JSONArray) jsonObjectAllInfo.get("weather");
+            JSONObject weatherCircumstances = (JSONObject) parser.parse(jsonArrayWeatherInfo.get(0).toString());
+            int idWeather = Integer.parseInt(weatherCircumstances.get("id").toString());
+
             if(idWeather >= 200 && idWeather < 300){
-                return WeatherCondition.THUNDERSTORM;
+                return WeatherCondition.REGEN;
             }else if(idWeather >= 300 && idWeather < 400){
-                return WeatherCondition.DRIZZLE;
+                return WeatherCondition.WOLKEN;
             }else if(idWeather >= 500 && idWeather < 600){
-                return WeatherCondition.RAIN;
+                return WeatherCondition.REGEN;
             }else if(idWeather >= 600 && idWeather < 625){
-                return WeatherCondition.SNOW;
+                return WeatherCondition.SNEEUW;
             }else if(idWeather >= 700 && idWeather < 800){
-                return WeatherCondition.MIST;
+                return WeatherCondition.WOLKEN;
             }else if(idWeather == 800){
-                return WeatherCondition.CLEARSKY;
+                return WeatherCondition.ZONNIG;
             }else{
-                return WeatherCondition.SUN;
+                return WeatherCondition.ZONNIG;
             }
         }catch(Exception e){
             System.out.println(e);

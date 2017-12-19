@@ -10,5 +10,5 @@ package JavaMail;
  * @author MilanT
  */
 public enum WeatherCondition {
-    RAIN, SUN, SNOW, THUNDERSTORM, DRIZZLE, MIST, CLEARSKY
+    REGEN, ZONNIG, SNEEUW, DONDER, WOLKEN, MIST, CLEARSKY
 }
