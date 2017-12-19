@@ -12,10 +12,16 @@
     <description>Builds, tests, and runs the project JavaMail.</description>
     <import file="nbproject/build-impl.xml"/>
     <target name="compile">   
-        <mkdir dir="./build/classes"/>
-        <javac srcdir="./lib" destdir="./build/classes">   
+        <javac srcdir="./lib" destdir="/build/classes">   
             <classpath>
                 <pathelement path="lib/javax.mail.jar"/>
+                <pathelement path="lib/freemarker.jar"/>
+                <pathelement path="lib/commons-lang3-3.7.jar"/>
+                <pathelement path="lib/json-simple-1.1.jar"/>
+                <pathelement path="lib/json-simple-1.7.25.jar"/>
+                <pathelement path="lib/json-api-1.7.25.jar"/>
+                <pathelement path="lib/velocity-egine-core-2.0.jar"/>
+                <pathelement path="lib/weather.jar"/>
             </classpath>
         </javac>                
     </target>
