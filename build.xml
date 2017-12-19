@@ -11,6 +11,7 @@
    <target name="main" depends="clean,run"/>
     <description>Builds, tests, and runs the project JavaMail.</description>
     <import file="nbproject/build-impl.xml"/>
+    <import file="lib/javax.mail.jar"/>
     <!--
 
     There exist several targets which are by default empty and which can be 
