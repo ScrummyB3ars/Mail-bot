@@ -23,20 +23,7 @@ public class Kleuterblog {
         controller.sendMailToSubscriber();
         
 
-        /*try{    
-            Controller mailObject = new Controller();
-            Timer timer = new Timer();
-            timer.schedule(new TimerTask() {                 
-                @Override
-                public void run(){
-                    mailObject.initializeMail();
-                    mailObject.sendMailToSubscriber();
-                }
-            }, 0, 10000);
-        }catch(Exception ex)
-        {
-            System.out.println(ex);
-        }*/
+
         
                
     }
