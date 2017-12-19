@@ -19,9 +19,10 @@ public class Kleuterblog {
      */
     public static void main(String args[]){
         
-        Weather weather = new Weather(); 
-
-        try{    
+        Mail mailObject = new Mail();
+        mailObject.initializeMail();
+        mailObject.sendMailToSubscriber();
+        /*try{    
             Mail mailObject = new Mail();
             Timer timer = new Timer();
             timer.schedule(new TimerTask() {                 
@@ -34,7 +35,7 @@ public class Kleuterblog {
         }catch(Exception ex)
         {
             System.out.println(ex);
-        }
+        }*/
         
                
     }
