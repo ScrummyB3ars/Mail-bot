@@ -6,13 +6,12 @@
 package JavaMail;
 
 import java.io.BufferedReader;
-import java.io.DataOutputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
-import static javafx.css.StyleOrigin.USER_AGENT;
-import javax.net.ssl.HttpsURLConnection;
 import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 
 /**
  *
@@ -24,7 +23,10 @@ public class Subscriber {
     public String userName;
     public String emailAddress;
     public int zipCode;
-    private String URLAddSubscriber = "https://api-toddlr.herokuapp.com/addSubscriber";
+    
+    private static String URLSubscribers = "https://api-toddlr.herokuapp.com/users";
+    private static JSONArray subscriberInfo;
+    private static JSONParser parser;
     
     public Subscriber(int idSubrsciber, String userName, String emailAddress, int zipCode){
         this.idSubrsciber = idSubrsciber;
@@ -34,8 +36,62 @@ public class Subscriber {
     }
     
     public Subscriber(){
-        
+        parser = new JSONParser();
     }
+    
+    public static Subscriber getSubscriberInfo() {
+        try {
+            Subscriber subscriber = new Subscriber();
+            getAllSubscribersFromAPI();
+            parser.parse(subscriberInfo.toString());
+            JSONArray jsonObject = (JSONArray) parser.parse(subscriberInfo.get(0).toString());
+            JSONObject json = (JSONObject) jsonObject.get(4); //debug
+            subscriber.emailAddress = json.get("email").toString();
+            subscriber.userName = json.get("username").toString();
+            subscriber.idSubrsciber = Integer.parseInt(json.get("id").toString());
+            getAllSubscribers();
+            return subscriber;
+        } catch (Exception ex) {
+            System.out.println("getSubscriberInfo: " + ex);
+        }
+        return null;
+    }
+    
+    
+    public static Subscriber[] getAllSubscribers() {
+        try {
+            getAllSubscribersFromAPI();
+            parser = new JSONParser();
+            parser.parse(subscriberInfo.toString());
+            JSONArray jsonObject = (JSONArray) parser.parse(subscriberInfo.get(0).toString());
+            Subscriber[] subscribers = new Subscriber[jsonObject.size()];
+            for (int i = 0; i < jsonObject.size(); i++) {
+                JSONObject json = (JSONObject) jsonObject.get(i);
+                Subscriber subscriber = new Subscriber();
+                subscriber.emailAddress = json.get("email").toString();
+                subscriber.userName = json.get("username").toString();
+                subscriber.idSubrsciber = Integer.parseInt(json.get("id").toString());
+                subscriber.zipCode = Integer.parseInt(json.get("zip_code").toString());
+                subscribers[i] = subscriber;
+            }
+            return subscribers;
+        } catch (Exception ex) {
+            System.out.println("getAllSubscribers: " + ex);
+        }
+        return null;
+    }
+    
+        /**
+     * Makes API call to get all info about the users
+     */
+    private static void getAllSubscribersFromAPI() {
+        try {
+            subscriberInfo = (JSONArray) getAPIRequest(URLSubscribers);
+        } catch (Exception ex) {
+            System.out.println("getAllUsersFromAPI: " + ex);
+        }
+    }
+
     
     private static JSONArray getAPIRequest(String urlToRead) throws Exception {
       JSONArray test = new JSONArray();
@@ -50,43 +106,4 @@ public class Subscriber {
       rd.close();
       return test;
    }
-    
-    private void sendPost() throws Exception {
-
-        String url = "https://selfsolve.apple.com/wcResults.do";
-        URL obj = new URL(url);
-        HttpsURLConnection con = (HttpsURLConnection) obj.openConnection();
-
-        //add reuqest header
-        con.setRequestMethod("POST");
-        con.setRequestProperty("Accept-Language", "en-US,en;q=0.5");
-
-        String urlParameters = "{\"facebook_id\":\"5879654\",\"age_group\":\"jongste\"}";
-
-        // Send post request
-        con.setDoOutput(true);
-        DataOutputStream wr = new DataOutputStream(con.getOutputStream());
-        wr.writeBytes(urlParameters);
-        wr.flush();
-        wr.close();
-
-        int responseCode = con.getResponseCode();
-        System.out.println("\nSending 'POST' request to URL : " + url);
-        System.out.println("Post parameters : " + urlParameters);
-        System.out.println("Response Code : " + responseCode);
-
-        BufferedReader in = new BufferedReader(
-                new InputStreamReader(con.getInputStream()));
-        String inputLine;
-        StringBuffer response = new StringBuffer();
-
-        while ((inputLine = in.readLine()) != null) {
-                response.append(inputLine);
-        }
-        in.close();
-
-        //print result
-        System.out.println(response.toString());
-
-    }
 }

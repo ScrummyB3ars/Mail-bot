@@ -28,7 +28,7 @@ public class Weather {
     private String URLWeatherCondition = "http://api.openweathermap.org/data/2.5/weather?zip=9000,be&appid=c8f63cf0ac4245b55258a4609e1c532e";
     
     public Weather(){
-        
+        parser = new JSONParser();
     }
     
     public Weather(int zipCode, WeatherCondition weatherCondition){
@@ -49,7 +49,6 @@ public class Weather {
      */
     public WeatherCondition getCondition(int zipCode){
         try{            
-            parser = new JSONParser();
             JSONArray weatherInfo = (JSONArray) getAPIRequest(URLWeatherCondition);
             parser.parse(weatherInfo.toString());
             JSONObject jsonObjectAllInfo = (JSONObject) parser.parse(weatherInfo.get(0).toString());

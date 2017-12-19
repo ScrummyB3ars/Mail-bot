@@ -18,12 +18,13 @@ public class Kleuterblog {
      * @param args 
      */
     public static void main(String args[]){
+     
+        Controller controller = new Controller();
+        controller.sendMailToSubscriber();
         
-        Mail mailObject = new Mail();
-        mailObject.initializeMail();
-        mailObject.sendMailToSubscriber();
+
         /*try{    
-            Mail mailObject = new Mail();
+            Controller mailObject = new Controller();
             Timer timer = new Timer();
             timer.schedule(new TimerTask() {                 
                 @Override

@@ -34,19 +34,13 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
  */
 public class Mail {
 
-    private static JSONArray subscriberInfo;
-    private static JSONArray interaction_tip_random;
-    private static JSONArray taal_tip_random;
-
     private static String host;
     private static String senderName;
     private static String SenderPassword;
     private static String mailAddressSender;
 
     private static JSONParser parser;
-    private static Weather weather;
     private static Properties propertiesMailServer;
-    private static int counter = 0;
 
     public Mail() {
         parser = new JSONParser();
@@ -56,7 +50,6 @@ public class Mail {
      * Settings of the mail server Get data mailAddressSender api call
      */
     public static void initializeMail() {
-        getAllDataFromAPI();
         setSettingsMailserver();
     }
 
@@ -74,184 +67,15 @@ public class Mail {
         propertiesMailServer.put("mail.smtp.starttls.required", "true");
     }
 
-    /**
-     * Makes API calls to get all info about the users and tips
-     */
-    private static void getAllDataFromAPI() {
-        try {
-            subscriberInfo = (JSONArray) getAPIRequest("https://api-toddlr.herokuapp.com/users");
-            interaction_tip_random = (JSONArray) getAPIRequest("https://api-toddlr.herokuapp.com/interaction_tips");
-            taal_tip_random = (JSONArray) getAPIRequest("https://api-toddlr.herokuapp.com/theme_tips");
-        } catch (Exception ex) {
-            System.out.println("GetAllDataFromApi: " + ex);
-        }
-    }
-
-    /**
-     * Makes API call to get all info about the users
-     */
-    private static void getAllUsersFromAPI() {
-        try {
-            subscriberInfo = (JSONArray) getAPIRequest("https://api-toddlr.herokuapp.com/users");
-        } catch (Exception ex) {
-            System.out.println("getAllUsersFromAPI: " + ex);
-        }
-    }
-
-    /**
-     * Makes API call to get all info about the tips
-     */
-    private static void getRandomInteractionAndThemeTipFromAPI() {
-        try {
-            interaction_tip_random = (JSONArray) getAPIRequest("https://api-toddlr.herokuapp.com/interaction_tips/random");
-            taal_tip_random = (JSONArray) getAPIRequest("https://api-toddlr.herokuapp.com/theme_tips/random");
-        } catch (Exception ex) {
-            System.out.println("getRandomInteractionAndThemeTipFromAPI: " + ex);
-        }
-    }
-
-    /**
-     * Convert JSON taal_tip to string
-     *
-     * @return String with the taal tip
-     */
-    private static Tips getRandomTaal_Tip(WeatherCondition weatherCondition) {
-        try {
-            parser.parse(taal_tip_random.toString());
-            JSONArray allTips = (JSONArray) parser.parse(taal_tip_random.get(0).toString());
-            ArrayList conditionTips = new ArrayList();
-            for (int i = 0; i < allTips.size(); i++) {
-                JSONObject jsonObject = (JSONObject) parser.parse(allTips.get(i).toString());
-                if(weatherCondition == WeatherCondition.REGEN){
-                    if(((String) jsonObject.get("circumstances").toString()).contains("regen")){
-                        conditionTips.add(jsonObject);
-                    }
-                }else if(weatherCondition == WeatherCondition.WOLKEN){
-                    if(((String) jsonObject.get("circumstances").toString()).contains("wolk") || ((String) jsonObject.get("circumstances").toString()).contains("wind")){
-                        conditionTips.add(jsonObject);
-                    }
-                }else if(weatherCondition == WeatherCondition.SNEEUW){
-                    if(((String) jsonObject.get("circumstances").toString()).contains("winter") || ((String) jsonObject.get("circumstances").toString()).contains("sneeuw")){
-                        conditionTips.add(jsonObject);
-                    }
-                }else if(weatherCondition == WeatherCondition.ZONNIG){
-                    if(((String) jsonObject.get("circumstances").toString()).contains("zon")){
-                        conditionTips.add(jsonObject);
-                    }
-                }else{
-                    if(((String) jsonObject.get("circumstances").toString()).contains("zon")){
-                        conditionTips.add(jsonObject);
-                    }
-                }                
-            }
-            Random random = new Random();
-            
-            int r = random.nextInt((conditionTips.size() - 0) + 0) + 0;
-            JSONObject jsonObject = (JSONObject) parser.parse(conditionTips.get(r).toString());
-            Tips tip = new Tips (
-                (Long) (jsonObject.get("id")),
-                jsonObject.get("tip_content").toString(),
-                jsonObject.get("picture").toString()
-            );        
-            return (tip);
-        } catch (Exception ex) {
-            System.out.println("getRandomTaal_Tip: "  + ex);
-        }
-        return null;
-    }
-
-    /**
-     * Convert JSON interaction_tip to string
-     *
-     * @return String with the interaction tip
-     */
-    private static Tips getRandomInteraction_Tip() {
-        try {
-            parser.parse(interaction_tip_random.toString());
-            JSONArray allTips = (JSONArray) parser.parse(interaction_tip_random.get(0).toString());            
-            Random random = new Random();
-            int r = random.nextInt((allTips.size() - 0) + 0) + 0;
-            JSONObject jsonObject = (JSONObject) parser.parse(allTips.get(r).toString());
-            Tips tip = new Tips (
-                (Long) (jsonObject.get("id")),
-                jsonObject.get("tip_content").toString()                
-            );
-            return (tip);
-        } catch (Exception ex) {
-            System.out.println("getRandomInteraction_Tip: " + ex);
-        }
-        return null;
-    }
-
-    private static Subscriber getSubscriberInfo() {
-        try {
-            Subscriber subscriber = new Subscriber();
-            parser.parse(subscriberInfo.toString());
-            JSONArray jsonObject = (JSONArray) parser.parse(subscriberInfo.get(0).toString());
-            JSONObject json = (JSONObject) jsonObject.get(5); //debug
-            subscriber.emailAddress = json.get("email").toString();
-            subscriber.userName = json.get("username").toString();
-            subscriber.idSubrsciber = Integer.parseInt(json.get("id").toString());
-            getAllSubscribers();
-            return subscriber;
-        } catch (Exception ex) {
-            System.out.println("getSubscriberInfo: " + ex);
-        }
-        return null;
-    }
-
-    private static Subscriber[] getAllSubscribers() {
-        try {
-            parser.parse(subscriberInfo.toString());
-            JSONArray jsonObject = (JSONArray) parser.parse(subscriberInfo.get(0).toString());
-            Subscriber[] subscribers = new Subscriber[jsonObject.size()];
-            for (int i = 0; i < jsonObject.size(); i++) {
-                JSONObject json = (JSONObject) jsonObject.get(i);
-                Subscriber subscriber = new Subscriber();
-                subscriber.emailAddress = json.get("email").toString();
-                subscriber.userName = json.get("username").toString();
-                subscriber.idSubrsciber = Integer.parseInt(json.get("id").toString());
-                subscriber.zipCode = Integer.parseInt(json.get("zip_code").toString());
-                subscribers[i] = subscriber;
-            }
-            return subscribers;
-        } catch (Exception ex) {
-            System.out.println("getAllSubscribers: " + ex);
-        }
-        return null;
-    }
-
-    /**
-     * This method will send a mail with tips to all subscribers
-     */
-    public static void sendMailToAllSubscribers() {
-        weather = new Weather();
-        try {
-            Subscriber[] subscribers = getAllSubscribers();
-            for (Subscriber subscriber : subscribers) {
-                WeatherCondition weatherCondition = (weather.getCondition(subscriber.zipCode));
-                Tips taal_tip = getRandomTaal_Tip(weatherCondition);
-                Tips interaction_tip = getRandomInteraction_Tip();
-                setSessionToSendMail(subscriber.emailAddress, taal_tip.tipContent, interaction_tip.tipContent, subscriber.userName, taal_tip.image);
-            }
-        } catch (Exception ex) {
-            System.out.println("sendMailToAllSubscribers: " + ex);
-        }
-    }
 
     /**
      * This method will send a mail with tips to a subscriber
      *
      * @param subscriber Subscriber that wants to receive a maikl
      */
-    public static void sendMailToSubscriber() {
+    public static void sendMailToSubscriber(Subscriber subscriber, Tip taalTip, Tip interactionTip) {
         try {
-            weather = new Weather();
-            Subscriber subscriber = getAllSubscribers()[5];
-            WeatherCondition weatherCondition = (weather.getCondition(subscriber.zipCode));
-            Tips taal_tip = getRandomTaal_Tip(weatherCondition);        
-            Tips interaction_tip = getRandomInteraction_Tip();
-            setSessionToSendMail("dedeynebruno97@gmail.com", taal_tip.tipContent, interaction_tip.tipContent, subscriber.userName, taal_tip.image);
+            setSessionToSendMail("dedeynebruno97@gmail.com", taalTip.tipContent, interactionTip.tipContent, subscriber.userName, taalTip.image);
         } catch (Exception ex) {
             System.out.println("sendMailToSubscriber: " + ex);
         }
@@ -319,9 +143,7 @@ public class Mail {
     private static void setSessionToSendMail(String mail, String taal_tip, String interaction_tip, String name, String image) {
         try {
             setSettingsMailserver();
-            getAllDataFromAPI();
             boolean sessionDebug = false; //debug
-            counter++; //debug
 
             java.security.Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
 
