@@ -13,7 +13,7 @@
     <import file="nbproject/build-impl.xml"/>
     <target name="compile">   
         <mkdir dir="./build/classes"/>
-        <javac destdir="./build/classes">   
+        <javac srcdir="./lib" destdir="./build/classes">   
             <classpath>
                 <pathelement path="lib/javax.mail.jar"/>
             </classpath>
