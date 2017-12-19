@@ -83,7 +83,7 @@ public class Mail {
             interaction_tip_random = (JSONArray) getAPIRequest("https://api-toddlr.herokuapp.com/interaction_tips");
             taal_tip_random = (JSONArray) getAPIRequest("https://api-toddlr.herokuapp.com/theme_tips");
         } catch (Exception ex) {
-            System.out.println(ex);
+            System.out.println("GetAllDataFromApi: " + ex);
         }
     }
 
@@ -94,7 +94,7 @@ public class Mail {
         try {
             subscriberInfo = (JSONArray) getAPIRequest("https://api-toddlr.herokuapp.com/users");
         } catch (Exception ex) {
-            System.out.println(ex);
+            System.out.println("getAllUsersFromAPI: " + ex);
         }
     }
 
@@ -106,7 +106,7 @@ public class Mail {
             interaction_tip_random = (JSONArray) getAPIRequest("https://api-toddlr.herokuapp.com/interaction_tips/random");
             taal_tip_random = (JSONArray) getAPIRequest("https://api-toddlr.herokuapp.com/theme_tips/random");
         } catch (Exception ex) {
-            System.out.println(ex);
+            System.out.println("getRandomInteractionAndThemeTipFromAPI: " + ex);
         }
     }
 
@@ -115,7 +115,7 @@ public class Mail {
      *
      * @return String with the taal tip
      */
-    private static String[] getRandomTaal_Tip(WeatherCondition weatherCondition) {
+    private static Tips getRandomTaal_Tip(WeatherCondition weatherCondition) {
         try {
             parser.parse(taal_tip_random.toString());
             JSONArray allTips = (JSONArray) parser.parse(taal_tip_random.get(0).toString());
@@ -148,13 +148,14 @@ public class Mail {
             
             int r = random.nextInt((conditionTips.size() - 0) + 0) + 0;
             JSONObject jsonObject = (JSONObject) parser.parse(conditionTips.get(r).toString());
-            
-            String image = (String) jsonObject.get("picture").toString();
-            String tip = (String) jsonObject.get("tip_content").toString();
-            String[] array = {tip, image};           
-            return (array);
+            Tips tip = new Tips (
+                (Long) (jsonObject.get("id")),
+                jsonObject.get("tip_content").toString(),
+                jsonObject.get("picture").toString()
+            );        
+            return (tip);
         } catch (Exception ex) {
-            System.out.println(ex);
+            System.out.println("getRandomTaal_Tip: "  + ex);
         }
         return null;
     }
@@ -164,16 +165,20 @@ public class Mail {
      *
      * @return String with the interaction tip
      */
-    private static String getRandomInteraction_Tip() {
+    private static Tips getRandomInteraction_Tip() {
         try {
             parser.parse(interaction_tip_random.toString());
             JSONArray allTips = (JSONArray) parser.parse(interaction_tip_random.get(0).toString());            
             Random random = new Random();
             int r = random.nextInt((allTips.size() - 0) + 0) + 0;
             JSONObject jsonObject = (JSONObject) parser.parse(allTips.get(r).toString());
-            return (jsonObject.get("tip_content").toString());
+            Tips tip = new Tips (
+                (Long) (jsonObject.get("id")),
+                jsonObject.get("tip_content").toString()                
+            );
+            return (tip);
         } catch (Exception ex) {
-            System.out.println(ex);
+            System.out.println("getRandomInteraction_Tip: " + ex);
         }
         return null;
     }
@@ -190,7 +195,7 @@ public class Mail {
             getAllSubscribers();
             return subscriber;
         } catch (Exception ex) {
-            System.out.println(ex);
+            System.out.println("getSubscriberInfo: " + ex);
         }
         return null;
     }
@@ -211,7 +216,7 @@ public class Mail {
             }
             return subscribers;
         } catch (Exception ex) {
-            System.out.println(ex);
+            System.out.println("getAllSubscribers: " + ex);
         }
         return null;
     }
@@ -225,12 +230,12 @@ public class Mail {
             Subscriber[] subscribers = getAllSubscribers();
             for (Subscriber subscriber : subscribers) {
                 WeatherCondition weatherCondition = (weather.getCondition(subscriber.zipCode));
-                String taal_tip [] = getRandomTaal_Tip(weatherCondition);
-                String interaction_tip = (String) getRandomInteraction_Tip();
-                setSessionToSendMail(subscriber.emailAddress, taal_tip[0], interaction_tip, subscriber.userName, taal_tip[1]);
+                Tips taal_tip = getRandomTaal_Tip(weatherCondition);
+                Tips interaction_tip = getRandomInteraction_Tip();
+                setSessionToSendMail(subscriber.emailAddress, taal_tip.tipContent, interaction_tip.tipContent, subscriber.userName, taal_tip.image);
             }
         } catch (Exception ex) {
-            System.out.println(ex);
+            System.out.println("sendMailToAllSubscribers: " + ex);
         }
     }
 
@@ -244,11 +249,11 @@ public class Mail {
             weather = new Weather();
             Subscriber subscriber = getAllSubscribers()[5];
             WeatherCondition weatherCondition = (weather.getCondition(subscriber.zipCode));
-            String [] taal_tip = getRandomTaal_Tip(weatherCondition);        
-            String interaction_tip = (String) getRandomInteraction_Tip();
-            setSessionToSendMail("dedeynebruno97@gmail.com", taal_tip[0], interaction_tip, subscriber.userName, taal_tip[1]);
+            Tips taal_tip = getRandomTaal_Tip(weatherCondition);        
+            Tips interaction_tip = getRandomInteraction_Tip();
+            setSessionToSendMail(subscriber.emailAddress, taal_tip.tipContent, interaction_tip.tipContent, subscriber.userName, taal_tip.image);
         } catch (Exception ex) {
-            System.out.println(ex);
+            System.out.println("sendMailToSubscriber: " + ex);
         }
     }
 
@@ -277,7 +282,7 @@ public class Mail {
             mailTemplate.merge(context, writer);
             return writer.toString();
         } catch (Exception ex) {
-            System.out.println(ex);
+            System.out.println("initializeMailLayout: " + ex);
         }
         return null;
     }
@@ -295,7 +300,7 @@ public class Mail {
             msg.setContent(initializeMailLayout(taal_tip, interaction_tip, name, image), "text/html; charset=utf-8");
             return msg;
         } catch (Exception ex) {
-            System.out.println(ex);
+            System.out.println("createMessage: " + ex);
         }
         return null;
     }
@@ -307,7 +312,7 @@ public class Mail {
                 transport.sendMessage(msg, msg.getAllRecipients());
             }
         } catch (Exception ex) {
-            System.out.println(ex);
+            System.out.println("sendMail: " + ex);
         }
     }
 
@@ -327,7 +332,7 @@ public class Mail {
             sendMail(mailSession, msg);
             System.out.println("Mail naar: " + mail + ", " + taal_tip); //debug
         } catch (Exception ex) {
-            System.out.println(ex);
+            System.out.println("setSessionToSendMail: " + ex);
         }
     }
 
@@ -343,7 +348,7 @@ public class Mail {
             }
         }
         catch (Exception ex) {
-            System.out.println(ex);
+            System.out.println("getAPIRequest: " + ex);
         }
         return jsonArray;
     }
