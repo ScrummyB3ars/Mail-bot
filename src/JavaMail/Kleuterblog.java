@@ -28,7 +28,7 @@ public class Kleuterblog {
                     mailObject.initializeMail();
                     mailObject.sendMailToSubscriber();
                 }
-            }, 100, 500);
+            }, 100, 604800);
         }catch(Exception ex)
         {
             System.out.println(ex);
