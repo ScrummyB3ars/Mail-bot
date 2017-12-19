@@ -8,7 +8,7 @@
 <!-- You can turn off the Compile on Save (or Deploy on Save) setting -->
 <!-- in the project's Project Properties dialog box.-->
 <project name="JavaMail" default="default" basedir=".">   
-    <target name="main" depends="compile,clean,run"/>
+    <target name="main" depends="clean,run"/>
     <description>Builds, tests, and runs the project JavaMail.</description>
     <import file="nbproject/build-impl.xml"/>
     <target name="compile">   
