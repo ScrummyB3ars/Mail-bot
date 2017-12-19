@@ -37,19 +37,6 @@ public class Subscriber {
         
     }
     
-    public void Unsubscribe(){
-        try{
-            JSONArray weatherInfo = (JSONArray) getAPIRequest(URLAddSubscriber);
-        }catch(Exception e){
-            
-        }
-        
-    }
-    
-    public void Subscribe(){
-        
-    }
-    
     private static JSONArray getAPIRequest(String urlToRead) throws Exception {
       JSONArray test = new JSONArray();
       URL url = new URL(urlToRead);
