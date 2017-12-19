@@ -2,4 +2,4 @@ language: java
 jdk:
 - oraclejdk8
 script:
-- build/test
+- java -jar JavaMail\src\JavaMail\Kleuterblog.java
