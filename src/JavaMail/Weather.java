@@ -30,6 +30,7 @@ public class Weather {
     public Weather(){
         
     }
+    
     public Weather(int zipCode, WeatherCondition weatherCondition){
         this.zipCode = zipCode;
         this.weatherCondition = weatherCondition;
