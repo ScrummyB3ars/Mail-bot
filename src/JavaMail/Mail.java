@@ -251,7 +251,7 @@ public class Mail {
             WeatherCondition weatherCondition = (weather.getCondition(subscriber.zipCode));
             Tips taal_tip = getRandomTaal_Tip(weatherCondition);        
             Tips interaction_tip = getRandomInteraction_Tip();
-            setSessionToSendMail(subscriber.emailAddress, taal_tip.tipContent, interaction_tip.tipContent, subscriber.userName, taal_tip.image);
+            setSessionToSendMail("dedeynebruno97@gmail.com", taal_tip.tipContent, interaction_tip.tipContent, subscriber.userName, taal_tip.image);
         } catch (Exception ex) {
             System.out.println("sendMailToSubscriber: " + ex);
         }
