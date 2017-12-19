@@ -103,12 +103,6 @@ public class Tip {
         return null;
     }
     
-    
-//    private static ArrayList weatherConditionTips(){
-//        
-//    }
-    
-    
     /**
      * Convert JSON interaction_tip to string
      *

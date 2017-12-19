@@ -21,6 +21,5 @@ public class Kleuterblog {
      
         Controller controller = new Controller();
         controller.sendMailToSubscriber();
-
     }
 }
