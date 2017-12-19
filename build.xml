@@ -12,7 +12,7 @@
     <description>Builds, tests, and runs the project JavaMail.</description>
     <import file="nbproject/build-impl.xml"/>
     <target name="compile">   
-        <javac srcdir="./lib" destdir="/build/classes">   
+        <javac srcdir="lib" destdir="build/classes/JavaMail">   
             <classpath>
                 <pathelement path="lib/javax.mail.jar"/>
                 <pathelement path="lib/freemarker.jar"/>
