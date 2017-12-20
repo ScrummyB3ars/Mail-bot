@@ -32,27 +32,14 @@ public class Weather {
     }
     
     public Weather(int zipCode, WeatherCondition weatherCondition) throws NullPointerException{
-        if (zipCode == 0){
-            throw new NullPointerException("zipCode is null");
-        }
-        if (weatherCondition == null){
-            throw new NullPointerException("weatherCondition is null");
-        }
+        if (zipCode == 0 || weatherCondition == null)throw new NullPointerException("zipCode is null");
         
         this.zipCode = zipCode;
         this.weatherCondition = weatherCondition;
     }
     
     public Weather(int zipCode, int temperature, WeatherCondition weatherCondition) throws NullPointerException{
-        if (zipCode == 0){
-            throw new NullPointerException("zipCode is null");
-        }
-        if (temperature == 0){
-            throw new NullPointerException("temperature is null");
-        }
-        if (weatherCondition == null){
-            throw new NullPointerException("weatherCondition is null");
-        }
+        if (zipCode == 0 || weatherCondition == null || temperature == 0) throw new NullPointerException("zipCode is null");
         
         this.zipCode = zipCode;
         this.temperature = temperature;

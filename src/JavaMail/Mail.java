@@ -53,7 +53,7 @@ public class Mail {
         setSettingsMailserver();
     }
 
-    private static void setSettingsMailserver() {
+    public static void setSettingsMailserver() {
         host = "smtp.gmail.com";
         senderName = "bruno.testscrum@gmail.com";
         SenderPassword = "scrumkleuter";
@@ -67,14 +67,16 @@ public class Mail {
         propertiesMailServer.put("mail.smtp.starttls.required", "true");
     }
 
-
     /**
      * This method will send a mail with tips to a subscriber
      *
      * @param subscriber Subscriber that wants to receive a mail
      */
-    public static void sendMailToSubscriber(Subscriber subscriber, Tip taalTip, Tip interactionTip) {
-        try {
+    public static void sendMailToSubscriber(Subscriber subscriber, Tip taalTip, Tip interactionTip) throws NullPointerException{
+        if (subscriber == null || taalTip == null||  interactionTip == null) {
+            throw new NullPointerException("Variable is null");
+        } 
+        try {            
             setSessionToSendMail("dedeynebruno97@gmail.com", taalTip.tipContent, interactionTip.tipContent, subscriber.userName, taalTip.image);
         } catch (Exception ex) {
             System.out.println("sendMailToSubscriber: " + ex);
@@ -89,7 +91,10 @@ public class Mail {
      * @param name Name of the senderName
      * @return String with the HTML
      */
-    private static String initializeMailLayout(String team_tip, String interaction_tip, String name, String image) {
+    public static String initializeMailLayout(String team_tip, String interaction_tip, String name, String image) throws NullPointerException{
+        if (team_tip == null || interaction_tip == null||  name == null || image == null) {
+            throw new NullPointerException("Variable is null");
+        } 
         try {
             VelocityEngine velocityEngineObject = new VelocityEngine();
             velocityEngineObject.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
@@ -112,7 +117,10 @@ public class Mail {
     }
     
     
-    private static Message createMessage(Session mailSession, String mail, String taal_tip, String interaction_tip, String name, String image) {
+    public static Message createMessage(Session mailSession, String mail, String taal_tip, String interaction_tip, String name, String image) throws NullPointerException{
+        if (mailSession == null || mail == null||  taal_tip == null || interaction_tip == null || name == null || image == null) {
+            throw new NullPointerException("Variable is null");
+        }
         Message msg = new MimeMessage(mailSession);
         try {
             msg.setFrom(new InternetAddress(mailAddressSender));
@@ -129,7 +137,10 @@ public class Mail {
         return null;
     }
 
-    private static void sendMail(Session mailSession, Message msg) {
+    public static void sendMail(Session mailSession, Message msg) throws NullPointerException{
+        if (mailSession == null || msg == null) {
+            throw new NullPointerException("Variable is null");
+        }
         try {
             try (Transport transport = mailSession.getTransport("smtp")) {
                 transport.connect(host, senderName, SenderPassword);
@@ -140,7 +151,10 @@ public class Mail {
         }
     }
 
-    private static void setSessionToSendMail(String mail, String taal_tip, String interaction_tip, String name, String image) {
+    public static void setSessionToSendMail(String mail, String taal_tip, String interaction_tip, String name, String image) throws NullPointerException{
+        if (mail == null || taal_tip == null||  interaction_tip == null || name == null || image == null) {
+            throw new NullPointerException("Variable is null");
+        }
         try {
             setSettingsMailserver();
             boolean sessionDebug = false; //debug

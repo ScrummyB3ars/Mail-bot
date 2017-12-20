@@ -39,27 +39,14 @@ public class Tip {
     }
     
     public Tip(Long idTip, String tipContent)throws NullPointerException{
-        if (tipContent == null){
-            throw new NullPointerException("tipContent is null");
-        }
-        if (idTip == null){
-            throw new NullPointerException("idTip is null");
-        }
+        if (tipContent == null || idTip == null) throw new NullPointerException("Variable is null");
         
         this.idTip = idTip;
         this.tipContent = tipContent;
     }
     
     public Tip(Long idTip, String tipContent, String image)throws NullPointerException {        
-        if (tipContent == null){
-            throw new NullPointerException("tipContent is null");
-        }
-        if (image == null){
-            throw new NullPointerException("image is null");
-        }
-        if (idTip == null){
-            throw new NullPointerException("idTip is null");
-        }
+        if (tipContent == null || idTip == null || image == null) throw new NullPointerException("Variable is null");
         
         this.idTip = idTip;
         this.tipContent = tipContent;
