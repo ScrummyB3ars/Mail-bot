@@ -143,7 +143,7 @@ public class Tip {
             JSONObject jsonObject = (JSONObject) parser.parse(allTips.get(r).toString());
             Tip tip = new Tip (
                 (Long) (jsonObject.get("id")),
-                jsonObject.get("tip_content").toString()                
+                jsonObject.get("tip_content").toString()                        
             );
             return (tip);
         } catch (Exception ex) {

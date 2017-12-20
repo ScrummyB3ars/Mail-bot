@@ -20,9 +20,9 @@ public class Controller {
     public void sendMailToSubscriber(){
         Weather weather = new Weather();
         Subscriber subscriber = Subscriber.getSubscriberInfo();
-        Tip taalTip = Tip.getRandomInteraction_Tip();
+        Tip interactionTip = Tip.getRandomInteraction_Tip();
         WeatherCondition weatherConditionForSubscriber = weather.getCondition(subscriber.zipCode);
-        Tip interactionTip = Tip.getRandomTaal_Tip_Based_On_Weather(weatherConditionForSubscriber);
+        Tip taalTip = Tip.getRandomTaal_Tip_Based_On_Weather(weatherConditionForSubscriber);
         
         Mail.sendMailToSubscriber(subscriber, taalTip, interactionTip);
         

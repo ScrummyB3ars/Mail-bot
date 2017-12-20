@@ -307,12 +307,12 @@
 
                                     </table>
                                     <div id="images" style="max-width:99%; ">
-                                        <p style="vertical-align: text-top; font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #333333; text-align:center;" class="fblogo" border="0"/>Natuur en techniek Tip:</p>
-                                        <p style="vertical-align: text-top;" class="fblogo font-family: Helvetica, Arial, sans-serif; color: #333333; text-align:center;" border="0"/>$team_tip</p>
-                                    </div>
-                                    <div id="images" style="max-width:99%;">
                                         <p style="vertical-align: text-top; font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #333333; text-align:center;" class="fblogo" border="0"/>Interactie Tip</p>
                                         <p style="vertical-align: text-top;" class="fblogo font-family: Helvetica, Arial, sans-serif; color: #333333; text-align:center;" border="0"/>$interaction_tip</p>
+                                    </div>
+                                    <div id="images" style="max-width:99%;">
+                                        <p style="vertical-align: text-top; font-size: 20px; font-family: Helvetica, Arial, sans-serif; color: #333333; text-align:center;" class="fblogo" border="0"/>Natuur en techniek Tip:</p>
+                                        <p style="vertical-align: text-top;" class="fblogo font-family: Helvetica, Arial, sans-serif; color: #333333; text-align:center;" border="0"/>$team_tip</p>
                                     </div>
                                     <div id="images" style="max-width:99%; padding-top: 20px;">
                                         <img style="vertical-align: text-top;" class="fblogo" border="0" alt="Mail" src="https://api-toddlr.herokuapp.com/images/$image"/>
