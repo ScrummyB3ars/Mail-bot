@@ -38,17 +38,41 @@ public class Tip {
         parser = new JSONParser();
     }
     
-    public Tip(Long idTip, String tipContent){
+    public Tip(Long idTip, String tipContent)throws NullPointerException{
+        if (tipContent == null){
+            throw new NullPointerException("tipContent is null");
+        }
+        if (idTip == null){
+            throw new NullPointerException("idTip is null");
+        }
+        
         this.idTip = idTip;
         this.tipContent = tipContent;
     }
     
-    public Tip(Long idTip, String tipContent, String image){
+    public Tip(Long idTip, String tipContent, String image)throws NullPointerException {        
+        if (tipContent == null){
+            throw new NullPointerException("tipContent is null");
+        }
+        if (image == null){
+            throw new NullPointerException("image is null");
+        }
+        if (idTip == null){
+            throw new NullPointerException("idTip is null");
+        }
+        
         this.idTip = idTip;
         this.tipContent = tipContent;
-        this.image = image;
+        this.image = image;        
     }
     
+    public static JSONArray getInteractionTipsArray() {
+        return interaction_tip_random;
+    }
+    
+    public static JSONArray getTaalTipsArray() {
+        return taal_tip_random;
+    }    
     
     /**
      * This method will generate a random taal_tip based on the weather
@@ -131,7 +155,7 @@ public class Tip {
     /**
      * Makes API calls to get all info about the users and tips
      */
-    private static void getAllTipsFromAPI() {
+    public static void getAllTipsFromAPI() {
         try {
             interaction_tip_random = (JSONArray) getAPIRequest(URLInteractieTips);
             taal_tip_random = (JSONArray) getAPIRequest(URLTaalTips);
@@ -140,7 +164,7 @@ public class Tip {
         }
     }
     
-    private static JSONArray getAPIRequest(String urlToRead) throws Exception {
+    public static JSONArray getAPIRequest(String urlToRead) throws Exception {
       JSONArray test = new JSONArray();
       URL url = new URL(urlToRead);
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();

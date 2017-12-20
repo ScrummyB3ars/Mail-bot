@@ -71,7 +71,7 @@ public class Mail {
     /**
      * This method will send a mail with tips to a subscriber
      *
-     * @param subscriber Subscriber that wants to receive a maikl
+     * @param subscriber Subscriber that wants to receive a mail
      */
     public static void sendMailToSubscriber(Subscriber subscriber, Tip taalTip, Tip interactionTip) {
         try {
