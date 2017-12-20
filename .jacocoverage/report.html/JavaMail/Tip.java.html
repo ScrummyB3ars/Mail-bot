@@ -1,0 +1,187 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Tip.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;JavaMail&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">JavaMail</a> &gt; <span class="el_source">Tip.java</span></div><h1>Tip.java</h1><pre class="source lang-java linenums">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package JavaMail;
+
+import java.util.Random;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.util.ArrayList;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+/**
+ *
+ * @author MilanT
+ */
+public class Tip {
+    
+    public Long idTip;
+    public String tipContent;
+    public String image;
+    
+<span class="fc" id="L29">    private static String URLTaalTips = &quot;https://api-toddlr.herokuapp.com/theme_tips&quot;;</span>
+<span class="fc" id="L30">    private static String URLInteractieTips = &quot;https://api-toddlr.herokuapp.com/interaction_tips&quot;;</span>
+    
+    private static JSONArray interaction_tip_random;
+    private static JSONArray taal_tip_random;
+    private static JSONParser parser;
+    
+    
+<span class="fc" id="L37">    public Tip(){</span>
+<span class="fc" id="L38">        parser = new JSONParser();</span>
+<span class="fc" id="L39">    }</span>
+    
+<span class="fc" id="L41">    public Tip(Long idTip, String tipContent){</span>
+<span class="pc bpc" id="L42" title="1 of 4 branches missed.">        if (tipContent == null || idTip == null) throw new NullPointerException(&quot;Variable is null&quot;);</span>
+        
+<span class="fc" id="L44">        this.idTip = idTip;</span>
+<span class="fc" id="L45">        this.tipContent = tipContent;</span>
+<span class="fc" id="L46">    }</span>
+    
+<span class="fc" id="L48">    public Tip(Long idTip, String tipContent, String image){</span>
+<span class="pc bpc" id="L49" title="2 of 6 branches missed.">        if (tipContent == null || idTip == null || image == null) throw new NullPointerException(&quot;Variable is null&quot;);</span>
+        
+<span class="fc" id="L51">        this.idTip = idTip;</span>
+<span class="fc" id="L52">        this.tipContent = tipContent;</span>
+<span class="fc" id="L53">        this.image = image;</span>
+<span class="fc" id="L54">    }</span>
+    
+    public static JSONArray getInteractionTipsArray() {
+<span class="nc" id="L57">        return interaction_tip_random;</span>
+    }
+    
+    public static JSONArray getTaalTipsArray() {
+<span class="nc" id="L61">        return taal_tip_random;</span>
+    }   
+    
+    
+    /**
+     * This method will generate a random taal_tip based on the weather
+     * @param weatherCondition Weathercondition from the subscriber
+     * @return random taal tip
+     */
+    public static Tip getRandomTaal_Tip_Based_On_Weather(WeatherCondition weatherCondition) {
+        try {
+<span class="fc" id="L72">            getAllTipsFromAPI();</span>
+<span class="fc" id="L73">            parser = new JSONParser();</span>
+<span class="fc" id="L74">            parser.parse(taal_tip_random.toString());</span>
+<span class="fc" id="L75">            JSONArray allTips = (JSONArray) parser.parse(taal_tip_random.get(0).toString());</span>
+<span class="fc" id="L76">            ArrayList conditionTips = tipsBasedOnWeatherCondition(allTips, weatherCondition);</span>
+            
+<span class="fc" id="L78">            Random random = new Random();</span>
+            
+<span class="fc" id="L80">            int r = random.nextInt((conditionTips.size() - 0) + 0) + 0;</span>
+<span class="fc" id="L81">            JSONObject jsonObject = (JSONObject) parser.parse(conditionTips.get(r).toString());</span>
+<span class="fc" id="L82">            Tip tip = new Tip (</span>
+<span class="fc" id="L83">                (Long) (jsonObject.get(&quot;id&quot;)),</span>
+<span class="fc" id="L84">                jsonObject.get(&quot;tip_content&quot;).toString(),</span>
+<span class="fc" id="L85">                jsonObject.get(&quot;picture&quot;).toString()</span>
+            );        
+<span class="fc" id="L87">            return (tip);</span>
+<span class="nc" id="L88">        } catch (Exception ex) {</span>
+<span class="nc" id="L89">            System.out.println(&quot;getRandomTaal_Tip: &quot;  + ex);</span>
+        }
+<span class="nc" id="L91">        return null;</span>
+    }
+    
+    /**
+     * Gets tips for a specific weather condition
+     * @param allTips All tips 
+     * @param weatherCondition Weather condition were tips are needed for
+     * @return All tips specific for a weather condition
+     */
+    private static ArrayList tipsBasedOnWeatherCondition(JSONArray allTips, WeatherCondition weatherCondition){
+        try{
+<span class="fc" id="L102">            ArrayList conditionTips = new ArrayList();</span>
+<span class="fc bfc" id="L103" title="All 2 branches covered.">            for (int i = 0; i &lt; allTips.size(); i++) {</span>
+<span class="fc" id="L104">                JSONObject jsonObject = (JSONObject) parser.parse(allTips.get(i).toString());</span>
+<span class="pc bpc" id="L105" title="5 of 7 branches missed.">                if(null != weatherCondition)switch (weatherCondition) {</span>
+                    case REGEN:
+<span class="nc bnc" id="L107" title="All 2 branches missed.">                        if(((String) jsonObject.get(&quot;circumstances&quot;).toString()).contains(&quot;regen&quot;)){</span>
+<span class="nc" id="L108">                            conditionTips.add(jsonObject);</span>
+                        }   break;
+                    case WOLKEN:
+<span class="nc bnc" id="L111" title="All 4 branches missed.">                        if(((String) jsonObject.get(&quot;circumstances&quot;).toString()).contains(&quot;wolk&quot;) || ((String) jsonObject.get(&quot;circumstances&quot;).toString()).contains(&quot;wind&quot;)){</span>
+<span class="nc" id="L112">                            conditionTips.add(jsonObject);</span>
+                        }   break;
+                    case SNEEUW:
+<span class="fc bfc" id="L115" title="All 4 branches covered.">                        if(((String) jsonObject.get(&quot;circumstances&quot;).toString()).contains(&quot;winter&quot;) || ((String) jsonObject.get(&quot;circumstances&quot;).toString()).contains(&quot;sneeuw&quot;)){</span>
+<span class="fc" id="L116">                            conditionTips.add(jsonObject);</span>
+                        }   break;
+                    case ZONNIG:
+<span class="nc bnc" id="L119" title="All 2 branches missed.">                        if(((String) jsonObject.get(&quot;circumstances&quot;).toString()).contains(&quot;zon&quot;)){</span>
+<span class="nc" id="L120">                            conditionTips.add(jsonObject);</span>
+                        }   break;
+                    default:
+<span class="nc bnc" id="L123" title="All 2 branches missed.">                        if(((String) jsonObject.get(&quot;circumstances&quot;).toString()).contains(&quot;zon&quot;)){</span>
+<span class="nc" id="L124">                            conditionTips.add(jsonObject);</span>
+                        }   break;
+                }                
+            }
+<span class="fc" id="L128">            return conditionTips;</span>
+<span class="nc" id="L129">        }catch(Exception ex){</span>
+            
+        }
+<span class="nc" id="L132">        return null;  </span>
+    }
+    
+    
+    /**
+     * Convert JSON interaction_tip to string
+     *
+     * @return String with the interaction tip
+     */
+    public static Tip getRandomInteraction_Tip() {
+        try {
+<span class="fc" id="L143">            getAllTipsFromAPI();</span>
+<span class="fc" id="L144">            parser = new JSONParser();</span>
+<span class="fc" id="L145">            parser.parse(interaction_tip_random.toString());</span>
+<span class="fc" id="L146">            JSONArray allTips = (JSONArray) parser.parse(interaction_tip_random.get(0).toString());            </span>
+<span class="fc" id="L147">            Random random = new Random();</span>
+<span class="fc" id="L148">            int r = random.nextInt((allTips.size() - 0) + 0) + 0;</span>
+<span class="fc" id="L149">            JSONObject jsonObject = (JSONObject) parser.parse(allTips.get(r).toString());</span>
+<span class="fc" id="L150">            Tip tip = new Tip (</span>
+<span class="fc" id="L151">                (Long) (jsonObject.get(&quot;id&quot;)),</span>
+<span class="fc" id="L152">                jsonObject.get(&quot;tip_content&quot;).toString()                </span>
+            );
+<span class="fc" id="L154">            return (tip);</span>
+<span class="nc" id="L155">        } catch (Exception ex) {</span>
+<span class="nc" id="L156">            System.out.println(&quot;getRandomInteraction_Tip: &quot; + ex);</span>
+        }
+<span class="nc" id="L158">        return null;</span>
+    }
+    
+    /**
+     * Makes API calls to get all info about the users and tips
+     */
+    private static void getAllTipsFromAPI() {
+        try {
+<span class="fc" id="L166">            interaction_tip_random = (JSONArray) getAPIRequest(URLInteractieTips);</span>
+<span class="fc" id="L167">            taal_tip_random = (JSONArray) getAPIRequest(URLTaalTips);</span>
+<span class="nc" id="L168">        } catch (Exception ex) {</span>
+<span class="nc" id="L169">            System.out.println(&quot;GetAllDataFromApi: &quot; + ex);</span>
+<span class="fc" id="L170">        }</span>
+<span class="fc" id="L171">    }</span>
+    
+    private static JSONArray getAPIRequest(String urlToRead) throws Exception {
+<span class="fc" id="L174">      JSONArray test = new JSONArray();</span>
+<span class="fc" id="L175">      URL url = new URL(urlToRead);</span>
+<span class="fc" id="L176">      HttpURLConnection conn = (HttpURLConnection) url.openConnection();</span>
+<span class="fc" id="L177">      conn.setRequestMethod(&quot;GET&quot;);</span>
+<span class="fc" id="L178">      BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));</span>
+      String line;
+<span class="fc bfc" id="L180" title="All 2 branches covered.">      while ((line = rd.readLine()) != null) {</span>
+<span class="fc" id="L181">         test.add(line);</span>
+      }
+<span class="fc" id="L183">      rd.close();</span>
+<span class="fc" id="L184">      return test;</span>
+   }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

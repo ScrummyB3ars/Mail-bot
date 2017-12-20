@@ -16,16 +16,15 @@ public class Controller {
     
     /**
      * Sends mail with tips to a subscriber
+     * @param id Id of the subscriber
      */
-    public void sendMailToSubscriber(){
+    public void sendMailToSubscriberById(int id){
         Weather weather = new Weather();
-        Subscriber subscriber = Subscriber.getSubscriberInfo();
+        Subscriber subscriber = Subscriber.getSubscriberInfoById(id);
         Tip interactionTip = Tip.getRandomInteraction_Tip();
         WeatherCondition weatherConditionForSubscriber = weather.getCondition(subscriber.zipCode);
         Tip taalTip = Tip.getRandomTaal_Tip_Based_On_Weather(weatherConditionForSubscriber);
-        
-        Mail.sendMailToSubscriber(subscriber, taalTip, interactionTip);
-        
+        Mail.sendMailToSubscriber(subscriber, taalTip, interactionTip);   
     }
     
     /**
@@ -35,12 +34,10 @@ public class Controller {
         Weather weather = new Weather();
         Subscriber[] allSubscribers = Subscriber.getAllSubscribers();
         for(Subscriber subscriber : allSubscribers){
-            subscriber = Subscriber.getSubscriberInfo();
-            Tip taalTip = Tip.getRandomInteraction_Tip();
+            Tip interactionTip = Tip.getRandomInteraction_Tip();
             WeatherCondition weatherConditionForSubscriber = weather.getCondition(subscriber.zipCode);
-            Tip interactionTip = Tip.getRandomTaal_Tip_Based_On_Weather(weatherConditionForSubscriber);
+            Tip taalTip = Tip.getRandomTaal_Tip_Based_On_Weather(weatherConditionForSubscriber);
             Mail.sendMailToSubscriber(subscriber, taalTip, interactionTip);
-        }
-        
+        }       
     }
 }

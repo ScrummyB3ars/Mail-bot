@@ -18,46 +18,63 @@ import org.json.simple.parser.JSONParser;
  * @author MilanT
  */
 public class Subscriber {
-    
+
     public int idSubrsciber;
     public String userName;
     public String emailAddress;
     public int zipCode;
-    
+
     private static String URLSubscribers = "https://api-toddlr.herokuapp.com/users";
     private static JSONArray subscriberInfo;
     private static JSONParser parser;
-    
-    public Subscriber(int idSubrsciber, String userName, String emailAddress, int zipCode){
+
+    public Subscriber(int idSubrsciber, String userName, String emailAddress, int zipCode) {
         this.idSubrsciber = idSubrsciber;
         this.userName = userName;
         this.emailAddress = emailAddress;
         this.zipCode = zipCode;
     }
-    
-    public Subscriber(){
+
+    public Subscriber() {
         parser = new JSONParser();
     }
-    
-    public static Subscriber getSubscriberInfo() {
+
+    /**
+     * This method gets a subscriber based on his id
+     *
+     * @param id Id of the user
+     * @return Subscriber that belongs to the id
+     */
+    public static Subscriber getSubscriberInfoById(int id) {
+        Subscriber subscriber;
         try {
-            Subscriber subscriber = new Subscriber();
             getAllSubscribersFromAPI();
+            parser = new JSONParser();
             parser.parse(subscriberInfo.toString());
             JSONArray jsonObject = (JSONArray) parser.parse(subscriberInfo.get(0).toString());
-            JSONObject json = (JSONObject) jsonObject.get(4); //debug
-            subscriber.emailAddress = json.get("email").toString();
-            subscriber.userName = json.get("username").toString();
-            subscriber.idSubrsciber = Integer.parseInt(json.get("id").toString());
-            getAllSubscribers();
-            return subscriber;
+
+            for (int i = 0; i < jsonObject.size(); i++) {
+                JSONObject json = (JSONObject) jsonObject.get(i);
+                subscriber = new Subscriber();
+                subscriber.emailAddress = json.get("email").toString();
+                subscriber.userName = json.get("username").toString();
+                subscriber.idSubrsciber = Integer.parseInt(json.get("id").toString());
+                subscriber.zipCode = Integer.parseInt(json.get("zip_code").toString());
+                if (subscriber.idSubrsciber == id) {
+                    return subscriber;
+                }
+            }
         } catch (Exception ex) {
-            System.out.println("getSubscriberInfo: " + ex);
+            System.out.println("getAllSubscribers: " + ex);
         }
         return null;
     }
-    
-    
+
+    /**
+     * This method gets all subscribers
+     *
+     * @return List of all subscribers
+     */
     public static Subscriber[] getAllSubscribers() {
         try {
             getAllSubscribersFromAPI();
@@ -80,8 +97,8 @@ public class Subscriber {
         }
         return null;
     }
-    
-        /**
+
+    /**
      * Makes API call to get all info about the users
      */
     private static void getAllSubscribersFromAPI() {
@@ -92,18 +109,17 @@ public class Subscriber {
         }
     }
 
-    
-    private static JSONArray getAPIRequest(String urlToRead) throws Exception {
-      JSONArray test = new JSONArray();
-      URL url = new URL(urlToRead);
-      HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-      conn.setRequestMethod("GET");
-      BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
-      String line;
-      while ((line = rd.readLine()) != null) {
-         test.add(line);
-      }
-      rd.close();
-      return test;
-   }
+    public static JSONArray getAPIRequest(String urlToRead) throws Exception {
+        JSONArray APIInfo = new JSONArray();
+        URL url = new URL(urlToRead);
+        HttpURLConnection conn = (HttpURLConnection) url.openConnection();
+        conn.setRequestMethod("GET");
+        BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));
+        String line;
+        while ((line = rd.readLine()) != null) {
+            APIInfo.add(line);
+        }
+        rd.close();
+        return APIInfo;
+    }
 }

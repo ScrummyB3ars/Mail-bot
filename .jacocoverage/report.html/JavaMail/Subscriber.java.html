@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="en"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../.resources/report.css" type="text/css"/><link rel="shortcut icon" href="../.resources/report.gif" type="image/gif"/><title>Subscriber.java</title><link rel="stylesheet" href="../.resources/prettify.css" type="text/css"/><script type="text/javascript" src="../.resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../.sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">JaCoCoverage analysis of project &quot;JavaMail&quot; (powered by JaCoCo from EclEmma)</a> &gt; <a href="index.source.html" class="el_package">JavaMail</a> &gt; <span class="el_source">Subscriber.java</span></div><h1>Subscriber.java</h1><pre class="source lang-java linenums">/*
+ * To change this license header, choose License Headers in Project Properties.
+ * To change this template file, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package JavaMail;
+
+import java.io.BufferedReader;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import org.json.simple.JSONArray;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
+
+/**
+ *
+ * @author MilanT
+ */
+public class Subscriber {
+
+    public int idSubrsciber;
+    public String userName;
+    public String emailAddress;
+    public int zipCode;
+
+<span class="fc" id="L27">    private static String URLSubscribers = &quot;https://api-toddlr.herokuapp.com/users&quot;;</span>
+    private static JSONArray subscriberInfo;
+    private static JSONParser parser;
+
+<span class="fc" id="L31">    public Subscriber(int idSubrsciber, String userName, String emailAddress, int zipCode) {</span>
+<span class="fc" id="L32">        this.idSubrsciber = idSubrsciber;</span>
+<span class="fc" id="L33">        this.userName = userName;</span>
+<span class="fc" id="L34">        this.emailAddress = emailAddress;</span>
+<span class="fc" id="L35">        this.zipCode = zipCode;</span>
+<span class="fc" id="L36">    }</span>
+
+<span class="fc" id="L38">    public Subscriber() {</span>
+<span class="fc" id="L39">        parser = new JSONParser();</span>
+<span class="fc" id="L40">    }</span>
+
+    /**
+     * This method gets a subscriber based on his id
+     *
+     * @param id Id of the user
+     * @return Subscriber that belongs to the id
+     */
+    public static Subscriber getSubscriberInfoById(int id) {
+        Subscriber subscriber;
+        try {
+<span class="fc" id="L51">            getAllSubscribersFromAPI();</span>
+<span class="fc" id="L52">            parser = new JSONParser();</span>
+<span class="fc" id="L53">            parser.parse(subscriberInfo.toString());</span>
+<span class="fc" id="L54">            JSONArray jsonObject = (JSONArray) parser.parse(subscriberInfo.get(0).toString());</span>
+
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">            for (int i = 0; i &lt; jsonObject.size(); i++) {</span>
+<span class="fc" id="L57">                JSONObject json = (JSONObject) jsonObject.get(i);</span>
+<span class="fc" id="L58">                subscriber = new Subscriber();</span>
+<span class="fc" id="L59">                subscriber.emailAddress = json.get(&quot;email&quot;).toString();</span>
+<span class="fc" id="L60">                subscriber.userName = json.get(&quot;username&quot;).toString();</span>
+<span class="fc" id="L61">                subscriber.idSubrsciber = Integer.parseInt(json.get(&quot;id&quot;).toString());</span>
+<span class="fc" id="L62">                subscriber.zipCode = Integer.parseInt(json.get(&quot;zip_code&quot;).toString());</span>
+<span class="fc bfc" id="L63" title="All 2 branches covered.">                if (subscriber.idSubrsciber == id) {</span>
+<span class="fc" id="L64">                    return subscriber;</span>
+                }
+            }
+<span class="nc" id="L67">        } catch (Exception ex) {</span>
+<span class="nc" id="L68">            System.out.println(&quot;getAllSubscribers: &quot; + ex);</span>
+<span class="nc" id="L69">        }</span>
+<span class="nc" id="L70">        return null;</span>
+    }
+
+    /**
+     * This method gets all subscribers
+     *
+     * @return List of all subscribers
+     */
+    public static Subscriber[] getAllSubscribers() {
+        try {
+<span class="fc" id="L80">            getAllSubscribersFromAPI();</span>
+<span class="fc" id="L81">            parser = new JSONParser();</span>
+<span class="fc" id="L82">            parser.parse(subscriberInfo.toString());</span>
+<span class="fc" id="L83">            JSONArray jsonObject = (JSONArray) parser.parse(subscriberInfo.get(0).toString());</span>
+<span class="fc" id="L84">            Subscriber[] subscribers = new Subscriber[jsonObject.size()];</span>
+<span class="fc bfc" id="L85" title="All 2 branches covered.">            for (int i = 0; i &lt; jsonObject.size(); i++) {</span>
+<span class="fc" id="L86">                JSONObject json = (JSONObject) jsonObject.get(i);</span>
+<span class="fc" id="L87">                Subscriber subscriber = new Subscriber();</span>
+<span class="fc" id="L88">                subscriber.emailAddress = json.get(&quot;email&quot;).toString();</span>
+<span class="fc" id="L89">                subscriber.userName = json.get(&quot;username&quot;).toString();</span>
+<span class="fc" id="L90">                subscriber.idSubrsciber = Integer.parseInt(json.get(&quot;id&quot;).toString());</span>
+<span class="fc" id="L91">                subscriber.zipCode = Integer.parseInt(json.get(&quot;zip_code&quot;).toString());</span>
+<span class="fc" id="L92">                subscribers[i] = subscriber;</span>
+            }
+<span class="fc" id="L94">            return subscribers;</span>
+<span class="nc" id="L95">        } catch (Exception ex) {</span>
+<span class="nc" id="L96">            System.out.println(&quot;getAllSubscribers: &quot; + ex);</span>
+        }
+<span class="nc" id="L98">        return null;</span>
+    }
+
+    /**
+     * Makes API call to get all info about the users
+     */
+    private static void getAllSubscribersFromAPI() {
+        try {
+<span class="fc" id="L106">            subscriberInfo = (JSONArray) getAPIRequest(URLSubscribers);</span>
+<span class="nc" id="L107">        } catch (Exception ex) {</span>
+<span class="nc" id="L108">            System.out.println(&quot;getAllUsersFromAPI: &quot; + ex);</span>
+<span class="fc" id="L109">        }</span>
+<span class="fc" id="L110">    }</span>
+
+    public static JSONArray getAPIRequest(String urlToRead) throws Exception {
+<span class="fc" id="L113">        JSONArray APIInfo = new JSONArray();</span>
+<span class="fc" id="L114">        URL url = new URL(urlToRead);</span>
+<span class="fc" id="L115">        HttpURLConnection conn = (HttpURLConnection) url.openConnection();</span>
+<span class="fc" id="L116">        conn.setRequestMethod(&quot;GET&quot;);</span>
+<span class="fc" id="L117">        BufferedReader rd = new BufferedReader(new InputStreamReader(conn.getInputStream()));</span>
+        String line;
+<span class="fc bfc" id="L119" title="All 2 branches covered.">        while ((line = rd.readLine()) != null) {</span>
+<span class="fc" id="L120">            APIInfo.add(line);</span>
+        }
+<span class="fc" id="L122">        rd.close();</span>
+<span class="fc" id="L123">        return APIInfo;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.eclemma.org/jacoco">JaCoCo</a> 0.7.6.201602180812</span></div></body></html>

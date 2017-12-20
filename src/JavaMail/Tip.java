@@ -38,19 +38,19 @@ public class Tip {
         parser = new JSONParser();
     }
     
-    public Tip(Long idTip, String tipContent)throws NullPointerException{
+    public Tip(Long idTip, String tipContent){
         if (tipContent == null || idTip == null) throw new NullPointerException("Variable is null");
         
         this.idTip = idTip;
         this.tipContent = tipContent;
     }
     
-    public Tip(Long idTip, String tipContent, String image)throws NullPointerException {        
+    public Tip(Long idTip, String tipContent, String image){
         if (tipContent == null || idTip == null || image == null) throw new NullPointerException("Variable is null");
         
         this.idTip = idTip;
         this.tipContent = tipContent;
-        this.image = image;        
+        this.image = image;
     }
     
     public static JSONArray getInteractionTipsArray() {
@@ -59,7 +59,8 @@ public class Tip {
     
     public static JSONArray getTaalTipsArray() {
         return taal_tip_random;
-    }    
+    }   
+    
     
     /**
      * This method will generate a random taal_tip based on the weather
@@ -72,6 +73,32 @@ public class Tip {
             parser = new JSONParser();
             parser.parse(taal_tip_random.toString());
             JSONArray allTips = (JSONArray) parser.parse(taal_tip_random.get(0).toString());
+            ArrayList conditionTips = tipsBasedOnWeatherCondition(allTips, weatherCondition);
+            
+            Random random = new Random();
+            
+            int r = random.nextInt((conditionTips.size() - 0) + 0) + 0;
+            JSONObject jsonObject = (JSONObject) parser.parse(conditionTips.get(r).toString());
+            Tip tip = new Tip (
+                (Long) (jsonObject.get("id")),
+                jsonObject.get("tip_content").toString(),
+                jsonObject.get("picture").toString()
+            );        
+            return (tip);
+        } catch (Exception ex) {
+            System.out.println("getRandomTaal_Tip: "  + ex);
+        }
+        return null;
+    }
+    
+    /**
+     * Gets tips for a specific weather condition
+     * @param allTips All tips 
+     * @param weatherCondition Weather condition were tips are needed for
+     * @return All tips specific for a weather condition
+     */
+    private static ArrayList tipsBasedOnWeatherCondition(JSONArray allTips, WeatherCondition weatherCondition){
+        try{
             ArrayList conditionTips = new ArrayList();
             for (int i = 0; i < allTips.size(); i++) {
                 JSONObject jsonObject = (JSONObject) parser.parse(allTips.get(i).toString());
@@ -98,21 +125,13 @@ public class Tip {
                         }   break;
                 }                
             }
-            Random random = new Random();
+            return conditionTips;
+        }catch(Exception ex){
             
-            int r = random.nextInt((conditionTips.size() - 0) + 0) + 0;
-            JSONObject jsonObject = (JSONObject) parser.parse(conditionTips.get(r).toString());
-            Tip tip = new Tip (
-                (Long) (jsonObject.get("id")),
-                jsonObject.get("tip_content").toString(),
-                jsonObject.get("picture").toString()
-            );        
-            return (tip);
-        } catch (Exception ex) {
-            System.out.println("getRandomTaal_Tip: "  + ex);
         }
-        return null;
+        return null;  
     }
+    
     
     /**
      * Convert JSON interaction_tip to string
@@ -130,7 +149,7 @@ public class Tip {
             JSONObject jsonObject = (JSONObject) parser.parse(allTips.get(r).toString());
             Tip tip = new Tip (
                 (Long) (jsonObject.get("id")),
-                jsonObject.get("tip_content").toString()                        
+                jsonObject.get("tip_content").toString()                
             );
             return (tip);
         } catch (Exception ex) {
@@ -142,7 +161,7 @@ public class Tip {
     /**
      * Makes API calls to get all info about the users and tips
      */
-    public static void getAllTipsFromAPI() {
+    private static void getAllTipsFromAPI() {
         try {
             interaction_tip_random = (JSONArray) getAPIRequest(URLInteractieTips);
             taal_tip_random = (JSONArray) getAPIRequest(URLTaalTips);
@@ -151,7 +170,7 @@ public class Tip {
         }
     }
     
-    public static JSONArray getAPIRequest(String urlToRead) throws Exception {
+    private static JSONArray getAPIRequest(String urlToRead) throws Exception {
       JSONArray test = new JSONArray();
       URL url = new URL(urlToRead);
       HttpURLConnection conn = (HttpURLConnection) url.openConnection();

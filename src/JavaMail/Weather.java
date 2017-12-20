@@ -12,8 +12,6 @@ import java.net.URL;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
-//import org.json.JSONObject;
-
 
 /**
  *
@@ -22,10 +20,9 @@ import org.json.simple.parser.JSONParser;
 public class Weather {
     
     private int zipCode;
-    private int temperature;
     private JSONParser parser;
     private WeatherCondition weatherCondition;
-    private String URLWeatherCondition = "http://api.openweathermap.org/data/2.5/weather?zip=9000,be&appid=c8f63cf0ac4245b55258a4609e1c532e";
+    private String URLWeatherCondition;
     
     public Weather(){
         parser = new JSONParser();
@@ -38,21 +35,15 @@ public class Weather {
         this.weatherCondition = weatherCondition;
     }
     
-    public Weather(int zipCode, int temperature, WeatherCondition weatherCondition) throws NullPointerException{
-        if (zipCode == 0 || weatherCondition == null || temperature == 0) throw new NullPointerException("zipCode is null");
-        
-        this.zipCode = zipCode;
-        this.temperature = temperature;
-        this.weatherCondition = weatherCondition;
-    }
-    
     /**
      * This method will determine the weathercondition based on the ZIP code
      * @param zipCode Zip code of the 
      * @return Enumeration of the weather condition
      */
     public WeatherCondition getCondition(int zipCode){
-        try{            
+        try{
+            zipCode = 9000;
+            URLWeatherCondition = "http://api.openweathermap.org/data/2.5/weather?zip=" + zipCode + ",be&appid=c8f63cf0ac4245b55258a4609e1c532e";
             JSONArray weatherInfo = (JSONArray) getAPIRequest(URLWeatherCondition);
             parser.parse(weatherInfo.toString());
             JSONObject jsonObjectAllInfo = (JSONObject) parser.parse(weatherInfo.get(0).toString());

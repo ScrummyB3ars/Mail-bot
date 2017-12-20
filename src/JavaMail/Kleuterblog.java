@@ -1,10 +1,5 @@
 package JavaMail;
 
-import java.util.Timer;
-import java.util.TimerTask;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-
 
 
 /**
@@ -20,6 +15,8 @@ public class Kleuterblog {
     public static void main(String args[]){
      
         Controller controller = new Controller();
-        controller.sendMailToSubscriber();
+        controller.sendMailToSubscriberById(9);
+        //controller.sendMailToAllSubscribers();
+        
     }
 }

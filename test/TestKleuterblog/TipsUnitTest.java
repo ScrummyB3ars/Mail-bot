@@ -3,34 +3,31 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+package TestKleuterblog;
 
 import JavaMail.Tip;
 import JavaMail.WeatherCondition;
-import freemarker.core.Expression;
-import static org.hamcrest.CoreMatchers.any;
 import static org.hamcrest.CoreMatchers.instanceOf;
-import static org.hamcrest.CoreMatchers.is;
 import org.json.simple.JSONArray;
 import org.junit.After;
 import org.junit.AfterClass;
-import org.junit.Assert;
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import static org.junit.Assert.*;
+import org.junit.BeforeClass;
+
 
 /**
  *
- * @author User
+ * @author MilanT
  */
-public class TipTest {
+public class TipsUnitTest {
     private Tip tip;
     
-    public TipTest() {
+    public TipsUnitTest() {
         tip = new Tip();
     }
-    
-    @BeforeClass
+     @BeforeClass
     public static void setUpClass() {
     }
     
@@ -45,7 +42,7 @@ public class TipTest {
     @After
     public void tearDown() {
     }
-
+    
     @Test
     public void TestGetRandomInteraction_TipNotNull() throws Exception{
         System.out.println("RandomIntercationTip_NotNull");
@@ -63,30 +60,6 @@ public class TipTest {
     }
     
     @Test
-    public void TestGetAPIRequestNotNull() throws Exception{
-        System.out.println("ApiRequest_NotNull");
-        JSONArray instance = tip.getAPIRequest("https://api-toddlr.herokuapp.com/theme_tips"); 
-        
-        assertNotNull(instance);    
-    }  
-    
-    @Test
-    public void TestInteractionTipsArrayNotNull () throws Exception {
-        System.out.println("AllTipsFromAPI_InteractionTipArrayNotNull");
-        tip.getAllTipsFromAPI();
-        
-        assertNotNull(tip.getInteractionTipsArray());
-    }
-    
-    @Test
-    public void TestTaalTipsArrayNotNull () throws Exception {
-        System.out.println("AllTipsFromAPI_TaalTipArrayNotNull");
-        tip.getAllTipsFromAPI();
-        
-        assertNotNull(tip.getTaalTipsArray());
-    }
-    
-    @Test
     public void TestGetRandomTaal_Tip_Based_On_WeatherObject () throws Exception{
         System.out.println("TestGetRandomTaal_Tip_Based_On_WeatherObjectTipContent");        
         
@@ -100,13 +73,6 @@ public class TipTest {
         assertThat((tip.getRandomInteraction_Tip()), instanceOf(Tip.class));        
     }
     
-    @Test
-    public void TestGetAPIRequestObject() throws Exception{
-        System.out.println("APIRequest_ObjectInstanceOfJSONArray");         
-        
-        assertThat(tip.getAPIRequest("https://api-toddlr.herokuapp.com/theme_tips"), instanceOf(JSONArray.class));        
-    } 
-
     @Test(expected = NullPointerException.class)
     public void testNullArgumentTipConstructor() {
         System.out.println("testNullArgumentTip");
