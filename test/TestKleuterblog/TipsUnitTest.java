@@ -22,31 +22,34 @@ import org.junit.BeforeClass;
  * @author MilanT
  */
 public class TipsUnitTest {
-    private Tip tip;
+    private Tip testTip;
+    private static final Long idTip = Long.valueOf(12345);
+    private static final String tipContent = "tester@gmail.cam";
+    private static final String image = "tester46";
     
     public TipsUnitTest() {
-        tip = new Tip();
-    }
-     @BeforeClass
-    public static void setUpClass() {
+        testTip = new Tip();
+    }   
+    
+    @Test
+    public void testSubscriberOject() {
+        Tip instance = new Tip(idTip, tipContent, image);
+        assertEquals(instance.image, image);
+        assertEquals(instance.tipContent, tipContent);
+        assertEquals(instance.idTip, idTip);
     }
     
-    @AfterClass
-    public static void tearDownClass() {
-    }
-    
-    @Before
-    public void setUp() {
-    }
-    
-    @After
-    public void tearDown() {
+    @Test
+    public void testSubscriberOjectSndConstructor() {
+        Tip instance = new Tip(idTip, tipContent);
+        assertEquals(instance.tipContent, tipContent);
+        assertEquals(instance.idTip, idTip);
     }
     
     @Test
     public void TestGetRandomInteraction_TipNotNull() throws Exception{
         System.out.println("RandomIntercationTip_NotNull");
-        Tip instance = tip.getRandomInteraction_Tip();
+        Tip instance = testTip.getRandomInteraction_Tip();
 
         assertNotNull(instance);
     }
@@ -54,7 +57,7 @@ public class TipsUnitTest {
     @Test
     public void TestGetRandomTaal_Tip_Based_On_WeatherNotNull() throws Exception{
         System.out.println("RandomTaalTip_NotNull");
-        Tip instance = tip.getRandomTaal_Tip_Based_On_Weather(WeatherCondition.SNEEUW);
+        Tip instance = testTip.getRandomTaal_Tip_Based_On_Weather(WeatherCondition.SNEEUW);
 
         assertNotNull(instance);
     }
@@ -63,14 +66,14 @@ public class TipsUnitTest {
     public void TestGetRandomTaal_Tip_Based_On_WeatherObject () throws Exception{
         System.out.println("TestGetRandomTaal_Tip_Based_On_WeatherObjectTipContent");        
         
-        assertThat((tip.getRandomTaal_Tip_Based_On_Weather(WeatherCondition.SNEEUW)), instanceOf(Tip.class));        
+        assertThat((testTip.getRandomTaal_Tip_Based_On_Weather(WeatherCondition.SNEEUW)), instanceOf(Tip.class));        
     }
     
     @Test
     public void TestgetRandomInteraction_TipObject () throws Exception{
         System.out.println("RandomInteractionTip_ObbjectInstanceOfString");        
 
-        assertThat((tip.getRandomInteraction_Tip()), instanceOf(Tip.class));        
+        assertThat((testTip.getRandomInteraction_Tip()), instanceOf(Tip.class));        
     }
     
     @Test(expected = NullPointerException.class)

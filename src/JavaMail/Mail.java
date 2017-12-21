@@ -68,17 +68,52 @@ public class Mail {
     /**
      * This method will send a mail with tips to a subscriber
      *
-     * @param subscriber Subscriber that wants to receive a maikl
+     * @param subscriber Subscriber that wants to receive a mail
      */
     public static void sendMailToSubscriber(Subscriber subscriber, Tip taalTip, Tip interactionTip) {
         if (subscriber == null || taalTip == null||  interactionTip == null) {
             throw new NullPointerException("Variable is null");
         } 
         try {
-            setSessionToSendMail("dedeynebruno97@gmail.com", taalTip.tipContent, interactionTip.tipContent, subscriber.userName, taalTip.image);
+            setSessionToSendMail(subscriber, taalTip.tipContent, interactionTip.tipContent, taalTip.image);
         } catch (Exception ex) {
             System.out.println("sendMailToSubscriber: " + ex);
         }
+    }
+    
+    private static void setSessionToSendMail(Subscriber subscriber, String taal_tip, String interaction_tip, String image) {
+        try {
+            setSettingsMailserver();
+            boolean sessionDebug = false; //debug
+
+            java.security.Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
+
+            Session mailSession = Session.getDefaultInstance(propertiesMailServer, null);
+            mailSession.setDebug(sessionDebug);
+
+            Message msg = createMessage(mailSession, subscriber, taal_tip, interaction_tip, image);
+            sendMail(mailSession, msg);
+            System.out.println("Mail naar: " + subscriber.emailAddress + ", " + taal_tip); //debug
+        } catch (Exception ex) {
+            System.out.println("setSessionToSendMail: " + ex);
+        }
+    }
+    
+    private static Message createMessage(Session mailSession, Subscriber subscriber, String taal_tip, String interaction_tip, String image) {
+        Message msg = new MimeMessage(mailSession);
+        try {
+            msg.setFrom(new InternetAddress(mailAddressSender));
+            InternetAddress[] address = {new InternetAddress(subscriber.emailAddress)};
+            String subject = "Toddlr - Nieuwe tips!";
+            msg.setRecipients(Message.RecipientType.TO, address);
+            msg.setSubject(subject);
+            msg.setSentDate(new Date());
+            msg.setContent(initializeMailLayout(subscriber, taal_tip, interaction_tip, image), "text/html; charset=utf-8");
+            return msg;
+        } catch (Exception ex) {
+            System.out.println("createMessage: " + ex);
+        }
+        return null;
     }
 
     /**
@@ -89,7 +124,7 @@ public class Mail {
      * @param name Name of the senderName
      * @return String with the HTML
      */
-    private static String initializeMailLayout(String team_tip, String interaction_tip, String name, String image) {
+    private static String initializeMailLayout(Subscriber subscriber, String team_tip, String interaction_tip, String image) {
         try {
             VelocityEngine velocityEngineObject = new VelocityEngine();
             velocityEngineObject.setProperty(RuntimeConstants.RESOURCE_LOADER, "classpath");
@@ -97,10 +132,11 @@ public class Mail {
             velocityEngineObject.init();
             Template mailTemplate = velocityEngineObject.getTemplate("Templates/mail.vm");
             VelocityContext context = new VelocityContext();
-            context.put("name", name);
+            context.put("name", subscriber.userName);
             context.put("interaction_tip", interaction_tip);
             context.put("team_tip", team_tip);
             context.put("image", image);
+            context.put("mail", subscriber.emailAddress);
 
             StringWriter writer = new StringWriter();
             mailTemplate.merge(context, writer);
@@ -109,25 +145,7 @@ public class Mail {
             System.out.println("initializeMailLayout: " + ex);
         }
         return null;
-    }
-    
-    
-    private static Message createMessage(Session mailSession, String mail, String taal_tip, String interaction_tip, String name, String image) {
-        Message msg = new MimeMessage(mailSession);
-        try {
-            msg.setFrom(new InternetAddress(mailAddressSender));
-            InternetAddress[] address = {new InternetAddress(mail)};
-            String subject = "Toddlr - Nieuwe tips!";
-            msg.setRecipients(Message.RecipientType.TO, address);
-            msg.setSubject(subject);
-            msg.setSentDate(new Date());
-            msg.setContent(initializeMailLayout(taal_tip, interaction_tip, name, image), "text/html; charset=utf-8");
-            return msg;
-        } catch (Exception ex) {
-            System.out.println("createMessage: " + ex);
-        }
-        return null;
-    }
+    }  
 
     private static void sendMail(Session mailSession, Message msg) {
         try {
@@ -138,25 +156,7 @@ public class Mail {
         } catch (Exception ex) {
             System.out.println("sendMail: " + ex);
         }
-    }
-
-    private static void setSessionToSendMail(String mail, String taal_tip, String interaction_tip, String name, String image) {
-        try {
-            setSettingsMailserver();
-            boolean sessionDebug = false; //debug
-
-            java.security.Security.addProvider(new com.sun.net.ssl.internal.ssl.Provider());
-
-            Session mailSession = Session.getDefaultInstance(propertiesMailServer, null);
-            mailSession.setDebug(sessionDebug);
-
-            Message msg = createMessage(mailSession, mail, taal_tip, interaction_tip, name, image);
-            sendMail(mailSession, msg);
-            System.out.println("Mail naar: " + mail + ", " + taal_tip); //debug
-        } catch (Exception ex) {
-            System.out.println("setSessionToSendMail: " + ex);
-        }
-    }
+    }    
 
     private static JSONArray getAPIRequest(String urlToRead) throws Exception {
         JSONArray jsonArray = new JSONArray();
